@@ -1,6 +1,0 @@
-Ideias:
-
-Carrossel de personagens genéricos de RPG, para serem usados como base
-Builds não-ortodoxas: clérigo ateu, bardo mudo, bárbaro sábio, ladino leal, artífice 
-Builds otimizadas: melhor subclasse da classe
-Builds baseadas em conceitos: Healer, Necromante, ADC, Tank (Paavu), DPS, Rex
