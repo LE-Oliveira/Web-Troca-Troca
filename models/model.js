@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const personSchema = new mongoose.Schema({
-    name: String,
+    username: String,
     city: String,
     password: String
 }, {versionKey: false})
@@ -12,7 +12,7 @@ const stickerSchema = new mongoose.Schema({
 }, {versionKey: false})
 
 const stickerPersonSchema = new mongoose.Schema({
-    fidPerson: String,
+    username: String,
     fidSticker: String,
     option: String
 }, {versionKey: false})

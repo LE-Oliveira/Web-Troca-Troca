@@ -8,6 +8,7 @@ const cors = require("cors");
 const app = express();
 
 app.use('/api', routes);
+app.use('/img', express.static('static'));
 
 mongoose.connect(mongoString);
 const database = mongoose.connection;
