@@ -13,7 +13,6 @@ router.post('/register', jsonParser, async (req, res)=>{
     try{
         const name = req.body.username;
         const data = await Person.aggregate([{$match:{username: name}}]);
-        console.log(data);
         if(data.length == 0){
             const user = new Person({
                 username: name,
@@ -21,14 +20,15 @@ router.post('/register', jsonParser, async (req, res)=>{
                 password: req.body.password
                 });
             const dataToSave = await user.save();
+            var docs = [];
             for(var i=0;i<447;i++){
-                var figs = new StickerPerson({
+                docs.push(new StickerPerson({
                     username: name,
                     fidSticker: i+1,
                     option: "need"
-                })
-                const dataToSave = await figs.save();
+                }));
             }
+            const a = await StickerPerson.insertMany(docs);
             res.status(200).json(dataToSave);
         }
         else{
@@ -172,29 +172,16 @@ router.get('/getAllStickerOnePerson', async(req,res)=>{
         res.status(400).json({message: error.message});
     }
 })
-router.post('/postStickerPerson', jsonParser, async (req, res)=>{
+router.patch('/updateStickerPerson', jsonParser, async (req, res)=>{
     const idP = req.body.username;
     const opt = req.body.option;
     const idS = req.body.fidSticker;
-    try{
-        const user = await Person.aggregate([{$match:{username: idP}}]);
-        if(user[0] == undefined) res.status(400).json("Usuário inexistente");
-        else if(!["need", "give", "have"].includes(opt)) res.status(400).json("Opção incompatível");
-        else{
-            for(var i=0; i<idS.length; i++){
-                if(idS[i]>=0&&idS[i]<=447){
-                    var data = new StickerPerson({
-                        username: idP,
-                        fidSticker: idS[i],
-                        option: opt
-                    })
-                    const dataToSave = await data.save();
-                }
-            }
-            res.status(200).json("All relations saved");
-        }
-    }catch(error){
-        res.status(400).json({message: error.message})
+    const ret = await utils.UpdateRelations(idP, idS, opt);
+    if(ret.includes("Relação")){
+        res.status(200).json(ret);
+    }
+    else{
+        res.status(400).json(ret);
     }
 })
 router.get('/getAllStickerPerson', async (req, res)=>{
@@ -217,19 +204,18 @@ router.delete('/deleteStickerPerson', async (req, res)=>{
     }
 })
 
-router.post('/match', jsonParser, async (req,res)=>{
+router.get('/match', jsonParser, async (req,res)=>{
     try{
         const name = req.header('username');
         const city = req.header("city");
         const data = await utils.AllRelationsOnePerson(name);//recebe [give,need]
-        const giveCandidates = await utils.AllRelationsOneOption(data[0], name, city);
-        const needCandidates = await utils.AllRelationsOneOption(data[1], name, city);
-        console.log(giveCandidates);
+        const giveCandidates = await utils.AllRelationsOneOption(data[0], name, city, "need");
+        const needCandidates = await utils.AllRelationsOneOption(data[1], name, city, "give");
         var match = [];
-        for(var i=0; i<giveCandidates.length;i++){
-            for(var j=0;j<needCandidates.length;j++){
-                var aux = "Você dá a figurinha "+ needCandidates[j][1] + " e recebe a figurinha " + giveCandidates[i][1] + " do " + giveCandidates[i][0];
-                if(giveCandidates[i].username==needCandidates[j].username&&!match.includes(aux)){
+        for(var i=0; i<needCandidates.length;i++){
+            for(var j=0;j<giveCandidates.length;j++){
+                var aux = `Você dá a figurinha ${giveCandidates[j][1]} e recebe a figurinha ${needCandidates[i][1]} do ${needCandidates[i][0]}`;
+                if(needCandidates[i][0]==giveCandidates[j][0]&&!match.includes(aux)){
                     match.push(aux);
                 }
             }
