@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <title>Troca-Troca</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script>
+      var baseURL = "localhost";
+      var webSocketURL = "ws://" + baseURL + ":8000";
+      var restURL = "http://" + baseURL + ":3000";
+    </script>
+    <script
+      type="text/javascript"
+      src="src/js/reconnecting-websocket.js"
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="login-container" id="login-container">
+      <h1>LOGIN</h1>
+      <div class="login-form-container">
+        <div class="credential">
+            <label for="username-login">Email</label>
+            <input type="text" id="username-login" name="username-login" placeholder="Digite seu username">
+        </div>
+        <div class="credential">
+            <label for="password-login">Senha</label>
+            <input type="password" id="password-login" name="password" placeholder="Digite sua senha">
+        </div>
+        <div class="buttons">
+            <button class="login_btn" id="login_btn-login">Entrar</button>
+            <button class="register_btn" id="register_btn-login">Cadastrar</button>
+        </div>
+      </div>
+    </div>
+    <div class="register-container" id="register-container">
+      <h1>REGISTO</h1>
+      <div class="credential">
+        <label for="username-register">User</label>
+        <input type="text" id="username-register" name="username-register" placeholder="Digite seu username">
+    </div>
+    <div class="credential">
+        <label for="city-register">Cidade</label>
+        <input type="text" id="city-register" name="city" placeholder="Digite sua cidade">
+    </div>
+    <div class="credential">
+      <label for="password-register">Senha</label>
+      <input type="password" id="password-register" name="password" placeholder="Digite sua senha">
+  </div>
+    <div class="buttons">
+        <button class="login_btn" id="login_btn-register">Entrar</button>
+        <button class="register_btn" id="register_btn-register">Cadastrar</button>
+    </div>
+    </div>
+    <div class="header-container" id="header-container">
+      <button class="album_btn" id="album_btn">Album</button>
+      <button class="match_btn" id="match_btn">Matches</button>
+      <button class="logout_btn" id="logout_btn">Log Out</button>
+    </div>
+    <div class="album-container" id="album-container">
+      <h1>ALBUM</h1>
+      <div class="list_album-container" id="list_album-container"></div>
+    </div>
+    <div class="match-container" id="match-container">
+      <h1>Matches</h1>
+      <div class="filter">
+        <label for="city-match">Cidade</label>
+        <input type="text" id="city_filter-match" name="city" placeholder="Digite a cidade desejada">
+        <button class="filter_btn" id="filter_btn-match">Procurar</button>
+      </div>
+      <div class="list_match-container" id="list_match-container"></div>
+    </div>
+  </body>
+  <script type="text/javascript" src="src/js/ui.js"></script>
+  <script type="text/javascript" src="src/js/album.js"></script>
+  <script type="text/javascript" src="src/js/login.js"></script>
+  <script type="text/javascript" src="src/js/register.js"></script>
+  <script type="text/javascript" src="src/js/match.js"></script>
+</html>

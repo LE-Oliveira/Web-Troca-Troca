@@ -7,15 +7,18 @@ module.exports = {
             const data = await StickerPerson.aggregate([{$match:{username: req}}])
             var stickersGive = [];
             var stickersNeed = [];
+            var stickersHave = [];
             const tam = data.length;
             for(var i=0;i<tam;i++){
                 if(data[i].option == "need") {
                     stickersNeed.push(data[i].fidSticker);
                 } else if(data[i].option == "give"){
                     stickersGive.push(data[i].fidSticker);
+                } else if(data[i].option == "have"){
+                    stickersHave.push(data[i].fidSticker);
                 }
             }
-            var ret = [stickersGive, stickersNeed];
+            var ret = [stickersGive, stickersHave, stickersNeed];
             return ret;
         }catch(error){
             return json({message: error.message});
@@ -60,7 +63,14 @@ module.exports = {
             return error.message;
         }
     },
-    async onclick(){
-        
+    async album(req){
+        try{
+            var data = await StickerPerson.aggregate([{$match:{username: req, option: "have"}}]);
+            var stickers = [];
+            for(var i=0;i<data.length;i++){stickers.push(data[i].fidSticker);}
+            return stickers;
+        }catch(error){
+            return json({message: error.message});
+        }
     }
 }
