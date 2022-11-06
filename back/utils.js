@@ -1,5 +1,5 @@
 const { json } = require('body-parser');
-const {Person, Sticker, StickerPerson} = require('../models/model');
+const {Person, Sticker, StickerPerson} = require('./models/model');
 
 module.exports = {
     async AllRelationsOnePerson(req){
@@ -59,5 +59,8 @@ module.exports = {
         }catch(error){
             return error.message;
         }
+    },
+    async onclick(){
+        
     }
 }

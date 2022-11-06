@@ -1,15 +1,68 @@
 const {Person, Sticker, StickerPerson} = require('../models/model');
 const express = require('express');
 const router = express.Router();
-const utils = require('./utils');
+const utils = require('../utils');
 
 var bodyParser = require("body-parser");
+const { UpdateRelations } = require('../utils');
 var jsonParser = bodyParser.json();
 // var urlencodedParser = bodyParser.urlencoded({extended: false});
 
-module.exports = router;
-
-router.post('/register', jsonParser, async (req, res)=>{
+var getAllPesron = router.get('/getAllPerson', async (res)=>{
+    try{
+        const data = await Person.find();
+        res.json(data);
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+const getOnePerson = router.get('/getOnePerson', async (req, res)=>{
+    try{
+        const data = await Person.aggregate([{$match:{username: req.header('username')}}]);
+        res.json([data[0].username, data[0].city]);
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+const updatePerson = router.patch('/updatePerson', jsonParser, async (req, res)=>{
+    try{
+        const id = req.header('id');
+        const updatedData = req.body;
+        const options = {new : true};
+        const result = await Person.findByIdAndUpdate(
+            id, updatedData, options
+        )
+        res.send([result.username, result.city])
+    }
+    catch(error){
+        res.status(400).json({message: error.message})
+    }
+})
+const deletePerson = router.delete('/deletePerson', async (req, res)=>{
+    try{
+        const id = req.header('id');
+        const data = await Person.findByIdAndDelete(id);
+        const c = await StickerPerson.deleteMany({username: data.username});
+        res.send(`Usuário ${data.username} foi deletado com as relações ${c}`);
+    }
+    catch(error){
+        res.status(400).json({message: error.message})
+    }
+})
+const login = router.post('/login', jsonParser, async (req, res)=>{
+    try{
+        const data = await Person.aggregate([{$match:{username: req.body.name}}]);
+        if(data.length == 0) res.status(404).json("Usuário não cadastrado");
+        else if(data[0].password == req.body.password) res.status(202).json("Seja bem-vinde");
+        else res.status(401).json("Senha incorreta");
+    }
+    catch(error){
+        res.status(500).json({message: error.message});
+    }
+})
+const register = router.post('/register', jsonParser, async (req, res)=>{
     try{
         const name = req.body.username;
         const data = await Person.aggregate([{$match:{username: name}}]);
@@ -38,65 +91,8 @@ router.post('/register', jsonParser, async (req, res)=>{
         res.status(400).json({message: error.message})
     }
 })
-router.get('/getAllPerson', async (req, res)=>{
-    try{
-        const data = await Person.find();
-        res.json(data);
-    }
-    catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
-router.get('/getOnePerson', async (req, res)=>{
-    try{
-        const data = await Person.aggregate([{$match:{username: req.header('username')}}]);
-        res.json([data[0].username, data[0].city]);
-    }
-    catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
-router.patch('/updatePerson', jsonParser, async (req, res)=>{
-    try{
-        const id = req.header('id');
-        const updatedData = req.body;
-        const options = {new : true};
-        const result = await Person.findByIdAndUpdate(
-            id, updatedData, options
-        )
-        res.send([result.name, result.city])
-    }
-    catch(error){
-        res.status(400).json({message: error.message})
-    }
-})
-router.delete('/deletePerson', async (req, res)=>{
-    try{
-        const id = req.header('id');
-        const data = await Person.findByIdAndDelete(id);
-        const c = await StickerPerson.deleteMany({username: data.username});
-        res.send(`Usuário ${data.username} foi deletado com as relações ${c}`);
-    }
-    catch(error){
-        res.status(400).json({message: error.message})
-    }
-})
-router.post('/login', jsonParser, async (req, res)=>{
-    try{
-        const data = await Person.aggregate([{$match:{name: req.body.name}}]);
-        if(data[0].password == req.body.password){
-            res.status(202).json("Seja bem-vinde");
-        }
-        else{
-            res.status(401).json("Senha incorreta");
-        }
-    }
-    catch(error){
-        res.status(500),json({message: error.message});
-    }
-})
 
-router.post('/createSticker', jsonParser, async (req, res)=>{
+const createSticker = router.post('/createSticker', jsonParser, async (req, res)=>{
     try{
         const num = req.body.number;
         const data = await Sticker.aggregate([{$match:{number: num}}]);
@@ -116,7 +112,7 @@ router.post('/createSticker', jsonParser, async (req, res)=>{
     }
     
 })
-router.get('/getAllSticker', async (req, res)=>{
+const getAllSticker = router.get('/getAllSticker', async (req, res)=>{
     try{
         const data = await Sticker.find();
         res.json(data);
@@ -125,7 +121,7 @@ router.get('/getAllSticker', async (req, res)=>{
         res.status(500).json({message: error.message})
     }
 })
-router.get('/getOneSticker', async (req, res)=>{
+const getOneSticker = router.get('/getOneSticker', async (req, res)=>{
     try{
         const data = await Sticker.findById(req.header('id'));
         res.json(data);
@@ -134,7 +130,7 @@ router.get('/getOneSticker', async (req, res)=>{
         res.status(500).json({message: error.message})
     }
 })
-router.patch('/updateSticker', jsonParser, async (req, res)=>{
+const updateSticker = router.patch('/updateSticker', jsonParser, async (req, res)=>{
     try{
         const id = req.header('id');
         const updatedData = req.body;
@@ -148,7 +144,7 @@ router.patch('/updateSticker', jsonParser, async (req, res)=>{
         res.status(400).json({message: error.message})
     }
 })
-router.delete('/deleteSticker', async (req, res)=>{
+const deleteSticker = router.delete('/deleteSticker', async (req, res)=>{
     try{
         const id = req.header('id');
         const data = await Sticker.findByIdAndDelete(id);
@@ -159,7 +155,7 @@ router.delete('/deleteSticker', async (req, res)=>{
     }
 })
 
-router.get('/getAllStickerOnePerson', async(req,res)=>{
+const getAllStickerOnePerson = router.get('/getAllStickerOnePerson', async(req,res)=>{
     try{
         const ret = await utils.AllRelationsOnePerson(req.header('username'));
         if(ret.length==2){
@@ -172,7 +168,7 @@ router.get('/getAllStickerOnePerson', async(req,res)=>{
         res.status(400).json({message: error.message});
     }
 })
-router.patch('/updateStickerPerson', jsonParser, async (req, res)=>{
+const updateStickerPerson = router.patch('/updateStickerPerson', jsonParser, async (req, res)=>{
     const idP = req.body.username;
     const opt = req.body.option;
     const idS = req.body.fidSticker;
@@ -184,7 +180,7 @@ router.patch('/updateStickerPerson', jsonParser, async (req, res)=>{
         res.status(400).json(ret);
     }
 })
-router.get('/getAllStickerPerson', async (req, res)=>{
+const getAllStickerPerson = router.get('/getAllStickerPerson', async (req, res)=>{
     try{
         const data = await StickerPerson.find();
         res.json(data);
@@ -193,7 +189,7 @@ router.get('/getAllStickerPerson', async (req, res)=>{
         res.status(500).json({message: error.message})
     }
 })
-router.delete('/deleteStickerPerson', async (req, res)=>{
+const deleteStickerPerson = router.delete('/deleteStickerPerson', async (req, res)=>{
     try{
         const id = req.header('id');
         const data = await StickerPerson.findByIdAndDelete(id);
@@ -204,7 +200,7 @@ router.delete('/deleteStickerPerson', async (req, res)=>{
     }
 })
 
-router.get('/match', jsonParser, async (req,res)=>{
+const match = router.get('/match', jsonParser, async (req,res)=>{
     try{
         const name = req.header('username');
         const city = req.header("city");
@@ -226,3 +222,37 @@ router.get('/match', jsonParser, async (req,res)=>{
         res.status(400).json({message: error.message});
     }
 })
+const matched = router.patch('/matched', jsonParser, async (req,res)=>{
+    try{
+        const users = req.body.users;
+        for(i=0;i<2;i++){
+            await UpdateRelations(users[i][0], users[1-i][1], "have");
+            var toDelete = await StickerPerson.find({username: users[i][0], fidSticker:users[i][1], option:"give"});
+            console.log(toDelete);
+            var data = await StickerPerson.findByIdAndDelete(toDelete[0].id);
+        }
+        res.status(200).json("MATCHED");
+    } catch(error){
+        res.status(400).json({error: error});
+    }
+})
+
+module.exports = {
+    getAllPesron, 
+    getOnePerson, 
+    updatePerson,
+    deletePerson,
+    login,
+    register,
+    createSticker,
+    getAllSticker,
+    getOneSticker,
+    updateSticker,
+    deleteSticker,
+    getAllStickerOnePerson,
+    updateStickerPerson,
+    getAllStickerPerson,
+    deleteStickerPerson,
+    match,
+    matched
+};

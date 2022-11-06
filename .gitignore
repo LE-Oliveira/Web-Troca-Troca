@@ -1,2 +1,5 @@
-/node_modules
-/static
+/back/node_modules
+/back/static
+/front/node_modules
+/websocket/node_modules
+/referencias
