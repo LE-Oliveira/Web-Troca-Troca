@@ -23,19 +23,18 @@ selectElement("logout_btn").addEventListener("click", function(){goToLogin();})
 
 selectElement("album_btn").addEventListener("click", function(){goToAlbum();})
 
+selectElement("repetidas_btn").addEventListener("click", function(){goToRepetidas();})
+
 selectElement("match_btn").addEventListener("click", function(){goToMatch();})
 
 selectElement("filter_btn-match").addEventListener("click", function(){goToMatch();})
 
-selectElement("matched_btn-match").addEventListener("click", function(){teste();
-})
+selectElement("add-fig_btn").addEventListener("click", function(){goToAddFig();})
+
+selectElement("add-fig_btn-add").addEventListener("click", function(){addFig();})
 
 function selectElement(id){
     return document.getElementById(id);
-}
-
-function teste(){
-    alert("TESTE");
 }
 
 function goToLogin(){
@@ -44,6 +43,8 @@ function goToLogin(){
     $('#album-container').hide();
     $('#header-container').hide();
     $('#match-container').hide();
+    $('#add-fig-container').hide();
+    $('#repetidas-container').hide();
 }
 
 function goToRegister(){
@@ -52,15 +53,40 @@ function goToRegister(){
     $('#album-container').hide();
     $('#header-container').hide();
     $('#match-container').hide();
+    $('#add-fig-container').hide();
+    $('#repetidas-container').hide();
 }
 
 function goToAlbum(){
+    album(JSON.parse(localStorage.getItem("data"))[0]);
     $('#album-container').show();
-    album(JSON.parse(localStorage.getItem("data"))[1]);
     $('#header-container').show();
     $("#register-container").hide();
     $("#login-container").hide();
     $('#match-container').hide();
+    $('#add-fig-container').hide();
+    $('#repetidas-container').hide();
+}
+
+function goToRepetidas(){
+    repetidas(JSON.parse(localStorage.getItem("data"))[0]);
+    $('#repetidas-container').show();
+    $('#header-container').show();
+    $('#album-container').hide();
+    $("#register-container").hide();
+    $("#login-container").hide();
+    $('#match-container').hide();
+    $('#add-fig-container').hide();
+}
+
+function goToAddFig(){
+    $('#add-fig-container').show();
+    $('#header-container').show();
+    $("#register-container").hide();
+    $("#login-container").hide();
+    $('#match-container').hide();
+    $('#album-container').hide();
+    $('#repetidas-container').hide();
 }
 
 function goToMatch(){
@@ -75,4 +101,7 @@ function goToMatch(){
     $("#login-container").hide();
     $("#register-container").hide();
     $('#album-container').hide();
+    $('#add-fig-container').hide();
+    $('#repetidas-container').hide();
 }
+

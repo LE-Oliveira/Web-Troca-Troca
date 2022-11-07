@@ -52,12 +52,18 @@
     </div>
     <div class="header-container" id="header-container">
       <button class="album_btn" id="album_btn">Album</button>
+      <button class="add-fig_btn" id="add-fig_btn">Adicionar Figurinhas</button>
+      <button class="repetidas_btn" id="repetidas_btn">Repetidas</button>
       <button class="match_btn" id="match_btn">Matches</button>
       <button class="logout_btn" id="logout_btn">Log Out</button>
     </div>
     <div class="album-container" id="album-container">
       <h1>ALBUM</h1>
       <div class="list_album-container" id="list_album-container"></div>
+    </div>
+    <div class="repetidas-container" id="repetidas-container">
+      <h1>REPETIDAS</h1>
+      <div class="list_repetidas-container" id="list_repetidas-container"></div>
     </div>
     <div class="match-container" id="match-container">
       <h1>Matches</h1>
@@ -68,10 +74,21 @@
       </div>
       <div class="list_match-container" id="list_match-container"></div>
     </div>
+    <div class="add-fig-container" id="add-fig-container">
+      <div class="utils">
+        <label for="id-sticker">Número da Figurinha</label>
+        <input type="text" id="id-sticker" name="id-sticker" placeholder="Insira o número da figurinha">
+      </div>
+      <div class="buttons">
+        <button class="add-fig_btn-add" id="add-fig_btn-add">Adicionar</button>
+      </div>
+    </div>
   </body>
   <script type="text/javascript" src="src/js/ui.js"></script>
   <script type="text/javascript" src="src/js/album.js"></script>
+  <script type="text/javascript" src="src/js/repetidas.js"></script>
   <script type="text/javascript" src="src/js/login.js"></script>
   <script type="text/javascript" src="src/js/register.js"></script>
   <script type="text/javascript" src="src/js/match.js"></script>
+  <script type="text/javascript" src="src/js/addFig.js"></script>
 </html>

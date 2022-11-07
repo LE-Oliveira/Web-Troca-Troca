@@ -13,7 +13,7 @@ const stickerSchema = new mongoose.Schema({
 
 const stickerPersonSchema = new mongoose.Schema({
     username: String,
-    fidSticker: String,
+    fidSticker: Number,
     option: String
 }, {versionKey: false})
 
