@@ -1,7 +1,8 @@
 require('dotenv').config();
 
 // const appWs = require('./app-ws')
-const routes = require('./routes/routes')
+const routes = require('./routes/routes');
+const utils = require('./utils');
 const mongoString = process.env.DATABASE_URL;
 const express = require('express');
 const mongoose = require('mongoose');
@@ -21,33 +22,53 @@ database.on('error', (error) =>{console.log(error);})
 database.once('connected', ()=>{console.log('Banco de Dados conectado');})
 
 const wss = new WebSocket.Server(
-    "localhost:8000",
-    function () {console.log("Iniciando websocket na porta 8080");}
+    {port: 8000},
+    function () {console.log("WebSocker = 8000");}
 );
+var clientesOnline = [];
+var waitingMatch = [];
 wss.on("connection", function connection(ws) {
-    console.log("New connection");
-    ws.on('message', data => onMessage(ws, data));
-    ws.on('error', error => onError(ws, error));
-    console.log(`onConnection`);
-    // ws.on("message", async function incoming(message) {
-    //   var msg = JSON.parse(message);
-    //   switch (msg.type) {
-    //     case "login":
-    //       //console.log("Login");
-    //       routes.login(ws);
-    //     // WebSocketLoginController.login(ws, msg.data);
-    //       //console.log(WebSocketLoginController.connections);
-    //       break;
-    //     // case "aceita_match":
-        
-    //     //   break;
-    //   }
-    // });
-  
-    ws.send(JSON.stringify({msg:"Roi, client-kun"}));
-  });
-wss.broadcast = broadcast;
+    ws.on('message', async function incoming(message){
+        var m = JSON.parse(message);
+        console.log(m);
+        switch (m.tipo){
+            case 'login':
+                var flag = false;
+                clientesOnline.forEach(user =>{
+                    if(JSON.stringify(user) == JSON.stringify(m.data)){
+                        flag = true;
+                    }
+                })
+                if(!flag) clientesOnline.push(m.data);
+                console.log('Cliente aceito. Atualmente existem '+clientesOnline.length+' cliente(s) online');
+                for(var i=0;i<waitingMatch.length;i++){
+                    if(waitingMatch[i].SUser == m.data[0]){
+                        const match = waitingMatch[i];
+                        const mail = await utils.getMail(match.FUser);
+                        ws.send(JSON.stringify({
+                            tipo: "match",
+                            data: match,
+                            Email: mail
+                        }));
+                    }
+                }
+                break;
+            case 'logout':
+                clientesOnline.pop(m.data);
+                console.log('Até mais. Atualmente existem '+clientesOnline.length+' cliente(s) online');
+                break;
+            case 'toMatch':
+                for(var i=0;i<waitingMatch.length;i++){
+                    if(JSON.stringify(m.data) == JSON.stringify(waitingMatch[i])){return;}
+                }
+                waitingMatch.push(m.data);
+                console.log(waitingMatch);
+                break;
+            case 'matched':
+                console.log("PORRA SCOOBY-DOO VAI TOMAR NO CU");
+                break;  
+        }
+    });
+})
 
 app.listen(3000, "0.0.0.0");
-
-// const wss = appWs(server);

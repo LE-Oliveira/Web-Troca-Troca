@@ -13,16 +13,33 @@ async function match(name, cidade){
                 $('#list_match-container').append("<p1>Nao há ninguém na cidade para fazer match com você</p1>");
             }
             else{
-                for(var i=0;i<response.matches.length;i++){
+                var i;
+                for(i=0;i<response.matches.length;i++){
                     var str = `<p>${response.matches[i]}</p>
                     <button class="matched_btn" id="matched_btn-match-${i}">Dar match</button>`;
                     $('#list_match-container').append(str);
-                    selectElement(`matched_btn-match-${i}`).addEventListener("click", function(){alert(i)});
+                    console.log(`matched_btn-match-${i}`);
+                    toMatch(i, name, response.matches[i]);
                 }
             }
         },
         error: async function(error){console.log(error)}
     })
+}
+
+async function toMatch(i, user, message){
+    selectElement(`matched_btn-match-${i}`).addEventListener("click", function(){
+        try{
+            alert("Pedido de match enviado, esperando confirmação");
+            var info = message.split(" ");
+            const match = {FUser: user, FFig: info[4], SUser: info[11], SFig: info[9]};
+            ws.send(JSON.stringify({tipo:"toMatch", data: match}));
+        }
+        catch(error){
+            console.log(error);
+        }
+        
+    });
 }
 
 // async function matched(){
@@ -44,7 +61,10 @@ async function match(name, cidade){
 //                     var str = `<p>${response.matches[i]}</p>
 //                     <button class="matched_btn" id="matched_btn-match-${i}">Dar match</button>`;
 //                     $('#list_match-container').append(str);
-//                     selectElement(`matched_btn-match-${i}`).addEventListener("click", function(){alert(i)});
+//                     selectElement(`matched_btn-match-${i}`).addEventListener("click", function(){
+//                         const message = "";
+//                         ws.send(JSON.stringify({tipo:"toMatch", data:[]}));
+//                     });
 //                 }
 //             }
 //         },

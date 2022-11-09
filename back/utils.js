@@ -72,5 +72,9 @@ module.exports = {
         }catch(error){
             return json({message: error.message});
         }
+    },
+    async getMail(user){
+        data = await Person.find({username: user});
+        return data[0].mail;
     }
 }

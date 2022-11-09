@@ -13,7 +13,8 @@ async function login(name, pswd){
         }),
         success: async function(response){
             localStorage.setItem("data", JSON.stringify(response));
-            goToAlbum();
+            goToAlbum();;
+            startWebSocket(name, response[2]);
         },
         error: async function(error){
             alert(error.responseJSON);

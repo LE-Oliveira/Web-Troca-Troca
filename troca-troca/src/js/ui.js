@@ -3,7 +3,7 @@ $(document).ready(function(){goToLogin();})
 selectElement("login_btn-login").addEventListener("click", function(){
     const user = selectElement("username-login").value;
     const pswd = selectElement("password-login").value;
-    login(user, pswd)
+    login(user, pswd);
 })
 
 selectElement("register_btn-register").addEventListener("click", function(){
@@ -19,13 +19,20 @@ selectElement("register_btn-login").addEventListener("click", function(){goToReg
 
 selectElement("login_btn-register").addEventListener("click", function(){ goToLogin();})
 
-selectElement("logout_btn").addEventListener("click", function(){goToLogin();})
+selectElement("logout_btn").addEventListener("click", function(){
+    goToLogin();
+    localStorage.clear();
+    ws.send(JSON.stringify({tipo:"logout", data:[]}));
+})
 
 selectElement("album_btn").addEventListener("click", function(){goToAlbum();})
 
 selectElement("repetidas_btn").addEventListener("click", function(){goToRepetidas();})
 
-selectElement("match_btn").addEventListener("click", function(){goToMatch();})
+selectElement("match_btn").addEventListener("click", function(){
+    document.getElementById('city_filter-match').value = '';
+    goToMatch();
+})
 
 selectElement("filter_btn-match").addEventListener("click", function(){goToMatch();})
 

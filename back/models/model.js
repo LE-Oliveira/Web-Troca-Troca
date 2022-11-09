@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 
 const personSchema = new mongoose.Schema({
     username:{type: String, required: true},
-    city: String,
-    password: String
+    mail: {type: String, required: true},
+    city: {type: String, required: true},
+    password: {type: String, required: true}
 }, {versionKey: false})
 
 const stickerSchema = new mongoose.Schema({
@@ -12,9 +13,9 @@ const stickerSchema = new mongoose.Schema({
 }, {versionKey: false})
 
 const stickerPersonSchema = new mongoose.Schema({
-    username: String,
-    fidSticker: Number,
-    option: String
+    username: {type: String, required: true},
+    fidSticker: {type: Number, required: true},
+    option: {type: String, required: true}
 }, {versionKey: false})
 
 Person = mongoose.model('person', personSchema);
