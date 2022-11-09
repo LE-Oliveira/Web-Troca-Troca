@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-// const appWs = require('./app-ws')
 const routes = require('./routes/routes');
 const utils = require('./utils');
 const mongoString = process.env.DATABASE_URL;
@@ -65,7 +64,12 @@ wss.on("connection", function connection(ws) {
                 console.log(waitingMatch);
                 break;
             case 'matched':
-                console.log("PORRA SCOOBY-DOO VAI TOMAR NO CU");
+                waitingMatch.forEach(match =>{
+                    if(JSON.stringify(match)==JSON.stringify(m.data)){
+                        waitingMatch.pop(match);
+                    }
+                })
+                console.log("Match concluído");
                 break;  
         }
     });

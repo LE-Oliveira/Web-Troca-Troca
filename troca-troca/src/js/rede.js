@@ -11,8 +11,15 @@ async function startWebSocket(name, mail){
             case 'match':
                 const opt = confirm(`O user ${m.data.FUser} deseja troca a figurinha ${m.data.FFig} pela sua figurinha ${m.data.SFig}. Deseja confirmar o match?`);
                 if(opt){
+                    matched(m.data.FUser, m.data.FFIg, name, m.data.SFig);
                     alert(`Match confirmado, entre em contato com o user ${m.data.FUser} pelo email ${m.Email}`);
-                    ws.send(JSON.stringify({tipo:"matched", data:[]}));
+                    res = {
+                        FUser: m.data.FUser,
+                        FFig: m.data.FFIg, 
+                        SUser: name, 
+                        SFig: m.data.SFig
+                    }
+                    ws.send(JSON.stringify({tipo:"matched", data: res}));
                 }
                 break;
         }
